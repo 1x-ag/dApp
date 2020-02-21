@@ -150,7 +150,7 @@ export class CreatePositionComponent implements OnInit {
 
     _leverageModel = localStorage.getItem('leverageLeverageModel') ?
         localStorage.getItem('leverageLeverageModel') :
-        '3';
+        '2';
 
     get leverageModel() {
 
