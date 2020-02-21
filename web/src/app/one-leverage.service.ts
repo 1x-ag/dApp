@@ -29,7 +29,7 @@ export class OneLeverageService {
 
         const cache = new InMemoryCache();
         const link = new HttpLink({
-            uri: 'https://api.thegraph.com/subgraphs/name/deacix/onexag'
+            uri: 'https://api.thegraph.com/subgraphs/name/1x-ag/subgraph'
         });
 
         this.client = new ApolloClient({
