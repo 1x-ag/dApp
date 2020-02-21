@@ -237,6 +237,7 @@ export class CreatePositionComponent implements OnInit {
         } catch (e) {
 
             console.error(e);
+            this.error = true;
         }
 
         this.loading = false;

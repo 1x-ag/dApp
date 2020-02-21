@@ -136,6 +136,43 @@ export class OneLeverageService {
         });
     }
 
+    async closePosition(
+        contractAddress: string
+    ): Promise<string> {
+
+        const leverageContract = new (await this.web3Service.getWeb3Provider()).eth.Contract(
+            // @ts-ignore
+            OneLeverageABI,
+            contractAddress
+        );
+
+        const callData = leverageContract.methods.closePosition(
+            '0x0000000000000000000000000000000000000000'
+        )
+            .encodeABI();
+
+        const tx = this.web3Service.txProvider.eth.sendTransaction({
+            from: this.web3Service.walletAddress,
+            to: leverageContract.address,
+            value: 0,
+            gasPrice: this.configurationService.fastGasPrice,
+            data: callData
+        });
+
+        return new Promise((resolve, reject) => {
+
+            tx
+                .once('transactionHash', async (hash) => {
+
+                    resolve(hash);
+                })
+                .on('error', (err) => {
+
+                    reject(err);
+                });
+        });
+    }
+
     async getOpenPositions(
         walletAddress: string,
         first: number = 100,
