@@ -51,7 +51,7 @@
                         <oi-token-selector
                             id="marginToken"
                             [token]="marginToken"
-                            [tokenBlackList]="tokenBlackList"
+                            [tokenBlackList]="leverageTokenBlackList"
                             [tokenSpender]="tokenSpender"
                             (onTokenSelect)="onMarginTokenSelect($event)"
                         ></oi-token-selector>
@@ -72,7 +72,7 @@
                         <oi-token-selector
                             id="fromToken"
                             [token]="payToken"
-                            [tokenBlackList]="tokenBlackList"
+                            [tokenBlackList]="payTokenBlackList"
                             [tokenSpender]="tokenSpender"
                             (onTokenSelect)="onPayTokenSelect($event)"
                         ></oi-token-selector>
@@ -94,12 +94,12 @@
                     <div class="btn-group" btnRadioGroup [(ngModel)]="leverageModel">
                         <label class="btn btn-info round" btnRadio="2"
                                tabindex="0" role="button">2X</label>
-                        <label class="btn btn-info round" btnRadio="3"
-                               tabindex="0" role="button">3X</label>
-                        <label class="btn btn-info round" btnRadio="4"
-                               tabindex="0" role="button">4X</label>
-                        <label class="btn btn-info round" btnRadio="5"
-                               tabindex="0" role="button">5X</label>
+<!--                        <label class="btn btn-info round" btnRadio="3"-->
+<!--                               tabindex="0" role="button">3X</label>-->
+<!--                        <label class="btn btn-info round" btnRadio="4"-->
+<!--                               tabindex="0" role="button">4X</label>-->
+<!--                        <label class="btn btn-info round" btnRadio="5"-->
+<!--                               tabindex="0" role="button">5X</label>-->
                     </div>
                 </div>
                 <div class="form-check text-center pt-3">
@@ -112,24 +112,24 @@
                 </div>
                 <div *ngIf="useT800SaveBot">
                     <div class="row pt-4 ml-md-4 mr-md-4">
-                        <div class="col-4 col-xs-12 mt-2">Stop loss at
-                            <fa-icon class="upper"
-                                     [icon]="info"
-                                     tooltip="Lowest price which will trigger closing position"></fa-icon>
-                        </div>
-                        <div class="col-8 col-xs-12">
-                            <input type="text" class="form-control" [(ngModel)]="stopLossLimit" placeholder="in %"
-                                   aria-label="Amount">
-                        </div>
-                    </div>
-                    <div class="row pt-4 ml-md-4 mr-md-4">
-                        <div class="col-4 col-xs-12 mt-2">Take profit at
+                        <div class="col-4 col-xs-12 mt-2">Take profit at in %
                             <fa-icon class="upper"
                                      [icon]="info"
                                      tooltip="Highest price which will trigger closing position"></fa-icon>
                         </div>
                         <div class="col-8 col-xs-12">
                             <input type="text" class="form-control" [(ngModel)]="takeProfitLimit" placeholder="in %"
+                                   aria-label="Amount">
+                        </div>
+                    </div>
+                    <div class="row pt-4 ml-md-4 mr-md-4">
+                        <div class="col-4 col-xs-12 mt-2">Stop loss at in %
+                            <fa-icon class="upper"
+                                     [icon]="info"
+                                     tooltip="Lowest price which will trigger closing position"></fa-icon>
+                        </div>
+                        <div class="col-8 col-xs-12">
+                            <input type="text" class="form-control" [(ngModel)]="stopLossLimit" placeholder="in %"
                                    aria-label="Amount">
                         </div>
                     </div>

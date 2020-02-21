@@ -27,36 +27,48 @@ export class CreatePositionComponent implements OnInit {
 
     info = faInfoCircle;
     gasPrice;
-    tokenBlackList = [];
+    leverageTokenBlackList = [];
+    payTokenBlackList = [];
 
     leverageProviders = [
         {
             name: 'Compound',
             icon: 'assets/compound-v2.svg'
         },
-        {
-            name: 'Aave',
-            icon: 'assets/aave.png'
-        },
-        {
-            name: 'MakerDAO',
-            icon: 'assets/makerdao.svg'
-        },
-        {
-            name: '(bZx) Fulcrum',
-            icon: 'assets/fulcrum.png'
-        }
+        // {
+        //     name: 'Aave',
+        //     icon: 'assets/aave.png'
+        // },
+        // {
+        //     name: 'MakerDAO',
+        //     icon: 'assets/makerdao.svg'
+        // },
+        // {
+        //     name: '(bZx) Fulcrum',
+        //     icon: 'assets/fulcrum.png'
+        // }
     ];
 
-    marginTokenList = [
+    leverageMarginTokenList = [
         'ETH',
+        // 'DAI',
+        // 'WBTC',
+        // 'ZRX',
+        // 'BAT',
+        // 'tBTC',
+        // 'REP',
+        // 'USDC',
+    ];
+
+    payMarginTokenList = [
         'DAI',
-        'WBTC',
-        'ZRX',
-        'BAT',
-        'tBTC',
-        'REP',
-        'USDC',
+        // 'DAI',
+        // 'WBTC',
+        // 'ZRX',
+        // 'BAT',
+        // 'tBTC',
+        // 'REP',
+        // 'USDC',
     ];
 
     loading = true;
@@ -153,8 +165,12 @@ export class CreatePositionComponent implements OnInit {
 
     ngOnInit() {
 
-        this.tokenBlackList = Object.keys(this.tokenService.tokens)
-            .filter(tokenSymbol => this.marginTokenList.indexOf(tokenSymbol) === -1);
+        this.leverageTokenBlackList = Object.keys(this.tokenService.tokens)
+            .filter(tokenSymbol => this.leverageMarginTokenList.indexOf(tokenSymbol) === -1);
+
+        this.payTokenBlackList = Object.keys(this.tokenService.tokens)
+            .filter(tokenSymbol => this.payMarginTokenList.indexOf(tokenSymbol) === -1);
+
         this.gasPrice = this.configurationService.fastGasPrice;
 
         this.loading = false;
