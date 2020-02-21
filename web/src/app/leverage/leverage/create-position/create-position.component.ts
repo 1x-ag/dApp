@@ -68,7 +68,6 @@ export class CreatePositionComponent implements OnInit {
         // 'BAT',
         // 'tBTC',
         // 'REP',
-        // 'USDC',
     ];
 
     loading = true;
