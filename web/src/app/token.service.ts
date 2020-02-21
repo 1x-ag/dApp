@@ -194,7 +194,7 @@ export class TokenService {
             symbol: 'DAI',
             name: 'Dai Stablecoin',
             decimals: 18,
-                address: '0x6b175474e89094c44da98b954eedeac495271d0f'
+            address: '0x6b175474e89094c44da98b954eedeac495271d0f'
         },
         SAI: {
             symbol: 'SAI',
@@ -949,9 +949,9 @@ export class TokenService {
         do {
 
             promises.push(await (await this.getTokenHelperContract()).methods.balancesOfTokens(
-                    userWalletAddress,
-                    addresses.slice(index, index + step),
-                    this.configurationService.ONE_SPLIT_CONTRACT_ADDRESS
+                userWalletAddress,
+                addresses.slice(index, index + step),
+                this.configurationService.ONE_SPLIT_CONTRACT_ADDRESS
                 ).call()
             );
 
