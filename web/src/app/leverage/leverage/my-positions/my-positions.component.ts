@@ -74,6 +74,8 @@ export class MyPositionsComponent implements OnInit, OnDestroy {
 
                 this.loadPositions();
             });
+
+            this.runBackgroundJobs();
         }, 5000);
 
         await this.loadPositions();
