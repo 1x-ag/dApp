@@ -51,23 +51,22 @@ export class CreatePositionComponent implements OnInit {
 
     leverageMarginTokenList = [
         'ETH',
-        // 'DAI',
-        // 'WBTC',
-        // 'ZRX',
-        // 'BAT',
-        // 'tBTC',
-        // 'REP',
-        // 'USDC',
+        'DAI',
+        'WBTC',
+        'ZRX',
+        'BAT',
+        'REP',
+        'USDC',
     ];
 
     payMarginTokenList = [
+        'ETH',
         'DAI',
-        // 'DAI',
-        // 'WBTC',
-        // 'ZRX',
-        // 'BAT',
-        // 'tBTC',
-        // 'REP',
+        'WBTC',
+        'ZRX',
+        'BAT',
+        'REP',
+        'USDC',
     ];
 
     loading = true;
@@ -197,27 +196,17 @@ export class CreatePositionComponent implements OnInit {
 
         try {
 
-            const leverageTokenSymbol = this.oneLeverageService.getLeveregaTokenSymbol(
-                this.marginToken,
-                this.payToken,
-                Number(this.leverageModel)
-            );
-
-            const leverageTokenAddress = (await this.oneLeverageService.getTokenContract(
-                leverageTokenSymbol
-            )).address;
-
             if (
                 !(await this.tokenService.isApproved(
                     this.payToken,
-                    leverageTokenAddress,
+                    this.configurationService.FACTORY_CONTRACT_ADDRESS,
                     this._amountBN
                 ))
             ) {
 
                 await this.tokenService.approve(
                     this.payToken,
-                    leverageTokenAddress,
+                    this.configurationService.FACTORY_CONTRACT_ADDRESS,
                     this._amountBN
                 );
             }

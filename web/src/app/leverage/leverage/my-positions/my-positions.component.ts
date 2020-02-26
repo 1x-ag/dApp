@@ -136,13 +136,13 @@ export class MyPositionsComponent implements OnInit, OnDestroy {
                 };
             });
 
-            console.log('openPositions', this.openPositions);
+            // console.log('openPositions', this.openPositions);
 
             this.closedPositions = await this.oneLeverageService.getClosedPositions(
                 this.web3Service.walletAddress
             );
 
-            console.log('closedPositions', this.closedPositions);
+            // console.log('closedPositions', this.closedPositions);
         } catch (e) {
 
             console.error(e);

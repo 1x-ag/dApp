@@ -2,12 +2,16 @@ import { Injectable } from '@angular/core';
 import { Web3Service } from './web3.service';
 
 import OneLeverageABI from './abi/OneLeverageABI.json';
+import OneLeverageABI2 from './abi/OneLeverageABI2.json';
 import HolderOneABI from './abi/HolderOneABI.json';
+import FactoryABI from './abi/FactoryABI.json';
+
 import { ConfigurationService } from './configuration.service';
 import { BigNumber } from 'ethers/utils/bignumber';
 import { ethers } from 'ethers';
 import { ApolloClient } from 'apollo-client';
 import { gql, HttpLink, InMemoryCache } from 'apollo-boost';
+import { TokenService } from './token.service';
 
 @Injectable({
     providedIn: 'root'
@@ -15,11 +19,13 @@ import { gql, HttpLink, InMemoryCache } from 'apollo-boost';
 export class OneLeverageService {
 
     holderOneAaveCompoundContract;
+    factory;
     client;
 
     constructor(
         protected web3Service: Web3Service,
-        protected configurationService: ConfigurationService
+        protected configurationService: ConfigurationService,
+        protected tokenService: TokenService
     ) {
 
         this.init();
@@ -27,7 +33,10 @@ export class OneLeverageService {
 
     async init() {
 
-        const cache = new InMemoryCache();
+        const cache = new InMemoryCache({
+            resultCaching: false
+        });
+
         const link = new HttpLink({
             uri: 'https://api.thegraph.com/subgraphs/name/1x-ag/subgraph'
         });
@@ -42,28 +51,12 @@ export class OneLeverageService {
             HolderOneABI,
             this.configurationService.HOLDER_ONE_AAVE_COMPOUND
         );
-    }
 
-    async getTokenContract(leverageTokenSymbol: string) {
-
-        switch (leverageTokenSymbol) {
-
-            case '2xETHDAI':
-
-                return new (await this.web3Service.getWeb3Provider()).eth.Contract(
-                    // @ts-ignore
-                    OneLeverageABI,
-                    this.configurationService.ETHDAI2x
-                );
-
-            case '2xDAIETH':
-
-                return new (await this.web3Service.getWeb3Provider()).eth.Contract(
-                    // @ts-ignore
-                    OneLeverageABI,
-                    this.configurationService.DAIETH2x
-                );
-        }
+        this.factory = new (await this.web3Service.getWeb3Provider()).eth.Contract(
+            // @ts-ignore
+            FactoryABI,
+            this.configurationService.FACTORY_CONTRACT_ADDRESS
+        );
     }
 
     getLeveregaTokenSymbol(
@@ -85,6 +78,31 @@ export class OneLeverageService {
         }
     }
 
+    async getFactory(): Promise<any> {
+
+        // @ts-ignore
+        return new Promise((resolve, reject) => {
+
+            setTimeout(reject, 300000);
+
+            const check = () => {
+
+                if (this.factory) {
+
+                    resolve(this.factory);
+                    return;
+                }
+
+                setTimeout(() => {
+
+                    check();
+                }, 100);
+            };
+
+            check();
+        });
+    }
+
     async openPosition(
         collateralTokenSymbol: string,
         debtTokenSymbol: string,
@@ -95,9 +113,6 @@ export class OneLeverageService {
         takeProfit: number
     ): Promise<string> {
 
-        const leverageSymbol = leverageRatio + 'x' + collateralTokenSymbol + debtTokenSymbol;
-        const leverageContract = await this.getTokenContract(leverageSymbol);
-
         const stopLossBN = ethers.utils.bigNumberify(1e9).sub(
             ethers.utils.bigNumberify(stopLoss * 10000).mul(1e9).div(1e2).div(10000)
         ).mul(1e9);
@@ -106,9 +121,13 @@ export class OneLeverageService {
             ethers.utils.bigNumberify(takeProfit * 10000).mul(1e9).div(1e2).div(10000)
         ).mul(1e9);
 
-        const callData = leverageContract.methods.openPosition(
-            amount,
+        const callData = (await this.getFactory()).methods.openPosition(
             (await this.getHolderContract(leverageProvider)).address,
+            this.tokenService.getTokenBySymbol(collateralTokenSymbol).address,
+            this.tokenService.getTokenBySymbol(debtTokenSymbol).address,
+            leverageRatio,
+            amount,
+            1,
             stopLossBN,
             takeProfitBN
         )
@@ -116,7 +135,7 @@ export class OneLeverageService {
 
         const tx = this.web3Service.txProvider.eth.sendTransaction({
             from: this.web3Service.walletAddress,
-            to: leverageContract.address,
+            to: this.configurationService.FACTORY_CONTRACT_ADDRESS,
             value: debtTokenSymbol === 'ETH' ? amount : 0,
             gasPrice: this.configurationService.fastGasPrice,
             data: callData
@@ -140,9 +159,19 @@ export class OneLeverageService {
         contractAddress: string
     ): Promise<string> {
 
+        let abi;
+
+        if (contractAddress.toString() === '0x7778d1011e19C0091C930d4BEfA2B0e47441562A'.toLowerCase()) {
+
+            abi = OneLeverageABI;
+        } else {
+
+            abi = OneLeverageABI2;
+        }
+
         const leverageContract = new (await this.web3Service.getWeb3Provider()).eth.Contract(
             // @ts-ignore
-            OneLeverageABI,
+            abi,
             contractAddress
         );
 
